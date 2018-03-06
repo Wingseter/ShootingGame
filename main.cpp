@@ -9,6 +9,7 @@
 // 함수 선언
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
 bool CreateMainWindow(HINSTANCE, int);
+bool AnotherInstance();
 LRESULT WINAPI WinProc(HWND, UINT, WPARAM, LPARAM);
 
 // 전역 변수
@@ -31,6 +32,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	int nCmdShow)
 {
 	MSG msg;
+
+	// 중복실행 방지
+	if (AnotherInstance())
+		return false;
 
 	// 윈도우 생성
 	if (!CreateMainWindow(hInstance, nCmdShow))
@@ -166,6 +171,18 @@ LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
+}
+
+// 중복 실행 방지
+bool AnotherInstance()
+{
+	HANDLE ourMutex;
+
+	ourMutex = CreateMutex(NULL, true, "Use_a_different_string_here_for_each_program_48161 - XYZZY");
+
+	if (GetLastError() == ERROR_ALREADY_EXISTS)
+		return true;
+	return false;
 }
 
 bool CreateMainWindow(HINSTANCE hInstance, int nCmdShow)
