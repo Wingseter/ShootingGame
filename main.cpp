@@ -83,6 +83,13 @@ LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
+	case WM_CHAR:
+		switch (wParam)
+		{
+		case ESC_KEY:
+			PostQuitMessage(0);
+			return 0;
+		}
 	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
@@ -134,6 +141,18 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 
 	if (!hwnd)
 		return false;
+
+	if (!FULLSCREEN)
+	{
+		RECT clientRect;
+		GetClientRect(hwnd, &clientRect);
+		MoveWindow(hwnd,
+			0,
+			0,
+			GAME_WIDTH + (GAME_WIDTH - clientRect.right),
+			GAME_HEIGHT + (GAME_HEIGHT - clientRect.bottom),
+			TRUE);
+	}
 
 	ShowWindow(hwnd, nCmdShow);
 

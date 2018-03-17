@@ -15,11 +15,6 @@ Graphics::~Graphics()
 	releaseAll();
 }
 
-void Graphics::releaseAll()
-{
-	safeRelease(device3d);
-	safeRelease(direct3d);
-}
 
 void Graphics::initialize(HWND hw, int w, int h, bool full)
 {
@@ -35,6 +30,15 @@ void Graphics::initialize(HWND hw, int w, int h, bool full)
 
 	initD3Dpp();	// d3d 파라미터 넣어주기
 
+	if (fullscreen)
+	{
+		if (isAdapterCompatible())
+			d3dpp.FullScreen_RefreshRateInHz = pMode.RefreshRate;
+		else
+			throw(GameError(gameErrorNS::FATAL_ERROR,
+				"The graphics device does not support the specified resolution"));
+
+	}
 	// 장치 지원검사 필요있나?
 	D3DCAPS9 caps;
 	DWORD behavior;
@@ -95,3 +99,28 @@ HRESULT Graphics::showBackBuffer()
 
 	return result;
 }
+
+bool Graphics::isAdapterCompatible()
+{
+	UINT modes = direct3d->GetAdapterModeCount(D3DADAPTER_DEFAULT,
+		d3dpp.BackBufferFormat);
+
+	for (UINT i = 0; i < modes; i++)
+	{
+		result = direct3d->EnumAdapterModes(D3DADAPTER_DEFAULT,
+			d3dpp.BackBufferFormat,
+			i, &pMode);
+		if (pMode.Height == d3dpp.BackBufferHeight &&
+			pMode.Width == d3dpp.BackBufferWidth &&
+			pMode.RefreshRate >= d3dpp.FullScreen_RefreshRateInHz)
+			return true;
+	}
+	return false;
+}
+
+void Graphics::releaseAll()
+{
+	safeRelease(device3d);
+	safeRelease(direct3d);
+}
+

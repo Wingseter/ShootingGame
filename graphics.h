@@ -28,6 +28,7 @@ private:
 	LP_3D direct3d;
 	LP_3DDEVICE device3d;
 	D3DPRESENT_PARAMETERS d3dpp;
+	D3DDISPLAYMODE pMode;
 
 	HRESULT result;
 	HWND hwnd;
@@ -50,6 +51,8 @@ public:
 
 	// 화면 스왑
 	HRESULT showBackBuffer();
+
+	bool isAdapterCompatible();
 };
 
 #endif
