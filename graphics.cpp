@@ -1,5 +1,4 @@
 #include "graphics.h"
-#include "constants.h"
 
 Graphics::Graphics()
 {
@@ -8,6 +7,7 @@ Graphics::Graphics()
 	fullscreen = false;
 	width = GAME_WIDTH;
 	height = GAME_HEIGHT;
+	backColor = SETCOLOR_ARGB(255, 0, 0, 128); // dark blue
 }
 
 Graphics::~Graphics()
@@ -90,16 +90,13 @@ void Graphics::initD3Dpp()
 
 HRESULT Graphics::showBackBuffer()
 {
-	result = E_FAIL;
-	// 백버퍼 초기화
-	device3d->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 255, 0), 0.0f, 0);
-
 	// 백 버퍼 보여주기
 	result = device3d->Present(NULL, NULL, NULL, NULL);
 
 	return result;
 }
 
+// 기기 호환 검사
 bool Graphics::isAdapterCompatible()
 {
 	UINT modes = direct3d->GetAdapterModeCount(D3DADAPTER_DEFAULT,
@@ -118,9 +115,27 @@ bool Graphics::isAdapterCompatible()
 	return false;
 }
 
+// 장치 lost 검사
+HRESULT Graphics::getDeviceState()
+{
+	result = E_FAIL;
+	if (device3d == NULL)
+		return result;
+	result = device3d->TestCooperativeLevel();
+	return result;
+}
+
+// release
 void Graphics::releaseAll()
 {
 	safeRelease(device3d);
 	safeRelease(direct3d);
 }
 
+// 디바이스 리셋
+HRESULT Graphics::reset()
+{
+	initD3Dpp();
+	result = device3d->Reset(&d3dpp);
+	return result;
+}

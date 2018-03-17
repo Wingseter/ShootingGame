@@ -7,8 +7,7 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <crtdbg.h>
-#include "graphics.h"
-
+#include "shooting.h"
 // 함수 선언
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
 bool CreateMainWindow(HWND &, HINSTANCE, int);
@@ -16,9 +15,8 @@ bool AnotherInstance();
 LRESULT WINAPI WinProc(HWND, UINT, WPARAM, LPARAM);
 
 // 전역 변수
-HINSTANCE hInst;
-
-Graphics *graphics;
+Shooting *game = NULL;
+HWND hwnd = NULL;
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -30,7 +28,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 #endif
 
 	MSG msg;
-	HWND hwnd = NULL;
+
+	game = new Shooting;
 
 	// 중복실행 방지
 	if (AnotherInstance())
@@ -41,9 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		return false;
 
 	try {
-		graphics = new Graphics;
-
-		graphics->initialize(hwnd, GAME_WIDTH, GAME_HEIGHT, FULLSCREEN);
+		game->initialize(hwnd);
 
 		int done = 0;
 		// 메인 루프
@@ -58,40 +55,31 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				DispatchMessage(&msg);
 			}
 			else
-				graphics->showBackBuffer();
+				game->run(hwnd);
 		}
-		safeDelete(graphics);
+		safeDelete(game);
 		return msg.wParam;
 	}
 	catch (const GameError &err)
 	{
+		game->deleteAll();
+		DestroyWindow(hwnd);
 		MessageBox(NULL, err.getMessage(), "Error", MB_OK);
 	}
 	catch (...)
 	{
+		game->deleteAll();
+		DestroyWindow(hwnd);
 		MessageBox(NULL, "Unknown error Occur", "Error", MB_OK);
 	}
 
-	safeDelete(graphics);
+	safeDelete(game);
 	return 0;
 }
 
 LRESULT WINAPI WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch (msg)
-	{
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-	case WM_CHAR:
-		switch (wParam)
-		{
-		case ESC_KEY:
-			PostQuitMessage(0);
-			return 0;
-		}
-	}
-	return DefWindowProc(hwnd, msg, wParam, lParam);
+	return (game->messageHandler(hwnd, msg, wParam, lParam));
 }
 
 // 중복 실행 방지
@@ -126,6 +114,12 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 	if (RegisterClassEx(&wcx) == 0)
 		return false;
 
+	DWORD style;
+	if (FULLSCREEN)
+		style = WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP;
+	else
+		style = WS_OVERLAPPEDWINDOW;
+
 	hwnd = CreateWindow(
 		CLASS_NAME,
 		GAME_TITLE,
@@ -156,6 +150,5 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow)
 
 	ShowWindow(hwnd, nCmdShow);
 
-	UpdateWindow(hwnd);
 	return true;
 }

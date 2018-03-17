@@ -10,6 +10,7 @@
 class Graphics;
 
 #include <d3d9.h>
+#include <d3dx9.h>
 #include "constants.h"
 #include "gameError.h"
 
@@ -35,6 +36,7 @@ private:
 	bool fullscreen;
 	int width;
 	int height;
+	COLOR_ARGB backColor;
 	
 	// DirectX 초기화
 	void initD3Dpp();
@@ -53,6 +55,38 @@ public:
 	HRESULT showBackBuffer();
 
 	bool isAdapterCompatible();
+
+	// 디바이스 초기화
+	HRESULT reset();
+
+	// Getter and Setter
+	LP_3D get3D() { return direct3d; }
+
+	LP_3DDEVICE get3Ddevice() { return device3d; }
+
+	HDC getDC() { return GetDC(hwnd); }
+
+	HRESULT getDeviceState();
+
+	void setBackColor(COLOR_ARGB c) { backColor = c; }
+
+	HRESULT beginScene()
+	{
+		result = E_FAIL;
+		if (device3d == NULL)
+			return result;
+		device3d->Clear(0, NULL, D3DCLEAR_TARGET, backColor, 1.0F, 0);
+		result = device3d->BeginScene();
+		return result;
+	}
+
+	HRESULT endScene()
+	{
+		result = E_FAIL;
+		if (device3d)
+			result = device3d->EndScene();
+		return result;
+	}
 };
 
 #endif
