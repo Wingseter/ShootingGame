@@ -16,12 +16,20 @@
 // 이미지
 const char SKY_IMAGE[] = "picture\\sky.jpg";
 const char CD_IMAGE[] = "picture\\cd.jpg";
+const char MIKU_IMAGE[] = "picture\\miku.jpg";
 
 const char CLASS_NAME[] = "Shooting";
 const char GAME_TITLE[] = "Shooting game";
 const bool FULLSCREEN = false;	// 전채 화면인지
 const int GAME_WIDTH = 1280;	// 가로
 const int GAME_HEIGHT = 840;	// 길이
+
+const int MIKU_START_FRAME = 0;
+const int MIKU_END_FRAME = 9;
+const float MIKU_ANIMATION_DELAY = 0.2f;
+const int MIKU_COLS = 3;
+const int MIKU_WIDTH = 250;
+const int MIKU_HEIGHT = 300;
 
 
 // game

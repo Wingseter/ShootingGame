@@ -11,8 +11,10 @@ class Shooting : public Game
 private:
 	TextureManager skyTexture;
 	TextureManager cdTexture;
+	TextureManager mikuTexture;
 	Image cd;
 	Image sky;
+	Image miku;
 
 public:
 	Shooting();
