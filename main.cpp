@@ -57,7 +57,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			else
 				game->run(hwnd);
 		}
-		safeDelete(game);
+		SAFE_DELETE(game);
 		return msg.wParam;
 	}
 	catch (const GameError &err)
@@ -73,7 +73,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		MessageBox(NULL, "Unknown error Occur", "Error", MB_OK);
 	}
 
-	safeDelete(game);
+	SAFE_DELETE(game);
 	return 0;
 }
 

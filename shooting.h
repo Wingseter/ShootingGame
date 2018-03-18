@@ -3,11 +3,17 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include "game.h"
+#include "textureManager.h"
+#include "image.h"
 
 class Shooting : public Game
 {
 private:
-	//todo
+	TextureManager skyTexture;
+	TextureManager cdTexture;
+	Image cd;
+	Image sky;
+
 public:
 	Shooting();
 
