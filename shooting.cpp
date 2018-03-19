@@ -47,12 +47,36 @@ void Shooting::initialize(HWND hwnd)
 	miku.setFrames(MIKU_START_FRAME, MIKU_END_FRAME);   // animation frames
 	miku.setCurrentFrame(MIKU_START_FRAME);     // starting frame
 	miku.setFrameDelay(MIKU_ANIMATION_DELAY);
-	miku.setDegrees(45.0f);                     // angle of ship
 	return;
 }
 
 void Shooting::update()
 {
+	if (input->isKeyDown(MIKU_RIGHT_KEY))
+	{
+		miku.setX(miku.getX() + frameTime * MIKU_SPEED);
+		if (miku.getX() > GAME_WIDTH)
+			miku.setX((float)-miku.getWidth());
+	}
+	if (input->isKeyDown(MIKU_LEFT_KEY))
+	{
+		miku.setX(miku.getX() - frameTime * MIKU_SPEED);
+		if (miku.getX() < -miku.getWidth())
+			miku.setX((float)GAME_WIDTH);
+	}
+	if (input->isKeyDown(MIKU_UP_KEY))
+	{
+		miku.setY(miku.getY() - frameTime * MIKU_SPEED);
+		if (miku.getY() < -miku.getHeight())
+			miku.setY((float)GAME_HEIGHT);
+	}
+	if (input->isKeyDown(MIKU_DOWN_KEY))
+	{
+		miku.setY(miku.getY() + frameTime * MIKU_SPEED);
+		if (miku.getY() > GAME_HEIGHT)
+			miku.setY((float)-miku.getHeight());
+	}
+
 	miku.update(frameTime);
 }
 

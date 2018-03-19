@@ -26,10 +26,15 @@ const int GAME_HEIGHT = 840;	// 길이
 
 const int MIKU_START_FRAME = 0;
 const int MIKU_END_FRAME = 9;
-const float MIKU_ANIMATION_DELAY = 0.2f;
+const float MIKU_ANIMATION_DELAY = 0.5f;
 const int MIKU_COLS = 3;
 const int MIKU_WIDTH = 250;
 const int MIKU_HEIGHT = 300;
+
+const float ROTATION_RATE = 180.0f;
+const float SCALE_RATE = 0.2f;
+const float MIKU_SPEED = 100.0f;
+const float MIKU_SCALE = 1.5f;
 
 
 // game
@@ -43,6 +48,10 @@ const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;
 const UCHAR ESC_KEY = VK_ESCAPE;	// ESC 키 
 const UCHAR ALT_KEY = VK_MENU;	// alt
 const UCHAR ENTER_KEY = VK_RETURN;	// enter
+const UCHAR MIKU_LEFT_KEY = VK_LEFT;
+const UCHAR MIKU_RIGHT_KEY = VK_RIGHT;
+const UCHAR MIKU_UP_KEY = VK_UP;
+const UCHAR MIKU_DOWN_KEY = VK_DOWN;
 
 // 인라인 함수
 //template <typename T>
