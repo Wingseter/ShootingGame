@@ -1,182 +1,202 @@
-#include "game.h"
+#include "Game.h"
+
+constexpr int thickness = 15;
+constexpr float paddleH = 100.0f;
 
 Game::Game()
-{
-	input = new Input();
+	:wnd(nullptr)
+	,renderer(nullptr)
+	,ticksCount(0)
+	,isRunning(true)
+	,paddleDir(0)
+{}
 
-	paused = false;
-	graphics = NULL;
-	initialized = false;
-}
-
-Game::~Game()
+bool Game::Initialize() noexcept
 {
-	deleteAll();
-	ShowCursor(true);
-}
-
-LRESULT Game::messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	if (initialized)
+	int sdlResult = SDL_Init(SDL_INIT_VIDEO);
+	if (sdlResult != 0)
 	{
-		switch (msg)
+		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+		return false;
+	}
+
+	wnd = SDL_CreateWindow(
+		"Shooting Game",
+		100,
+		100,
+		1024,
+		768,
+		0
+	);
+	if (!wnd)
+	{
+		SDL_Log("Failed to create window %s", SDL_GetError());
+		return false;
+	}
+
+	renderer = SDL_CreateRenderer(
+		wnd,
+		-1,
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+	);
+
+	if (!renderer)
+	{
+		SDL_Log("Failed to create renderer : %s", SDL_GetError());
+		return false;
+	}
+	paddlePos.x = 10.0f;
+	paddlePos.y = 768.0f / 2.0f;
+	ballPos.x = 1024.0f / 2.0f;
+	ballPos.y = 768.0f / 2.0f;
+	ballVel.x = -200.0f;
+	ballVel.y = 235.0f;
+	return true;
+}
+
+void Game::RunLoop() noexcept
+{
+	while (isRunning)
+	{
+		ProcessInput();
+		UpdateGame();
+		GenerateOutput();
+	}
+}
+
+void Game::Shutdown() noexcept
+{
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(wnd);
+	SDL_Quit();
+}
+
+void Game::ProcessInput() noexcept
+{
+	SDL_Event event;
+	while (SDL_PollEvent(&event))
+	{
+		switch (event.type)
 		{
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			return 0;
-		case WM_KEYDOWN: case WM_SYSKEYDOWN:
-			input->keyDown(wParam);
-			return 0;
-		case WM_KEYUP: case WM_SYSKEYUP:
-			input->keyUp(wParam);
-			return 0;
-		case WM_CHAR:
-			input->keyIn(wParam);
-			return 0;
-		case WM_MOUSEMOVE:
-			input->mouseIn(lParam);
-			return 0;
-		case WM_INPUT:			// 마우스 raw 입력
-			input->mouseRawIn(lParam);
-			return 0;
-		case WM_LBUTTONDOWN:	//  왼쪽 버튼
-			input->setMouseLButton(true);
-			input->mouseIn(lParam);
-			return 0;
-		case WM_LBUTTONUP:		// 왼쪽 버튼
-			input->setMouseLButton(false);
-			input->mouseIn(lParam);
-			return 0;
-		case WM_MBUTTONDOWN:		// 중간 버튼
-			input->setMouseMButton(true);
-			input->mouseIn(lParam);
-			return 0;
-		case WM_MBUTTONUP:		// 중간버튼
-			input->setMouseMButton(false);
-			input->mouseIn(lParam);
-			return 0;
-		case WM_RBUTTONDOWN:
-			input->setMouseRButton(true);
-			input->mouseIn(lParam);
-			return 0;
-		case WM_RBUTTONUP:	
-			input->setMouseRButton(false);
-			input->mouseIn(lParam);
-			return 0;
-		case WM_XBUTTONDOWN: case WM_XBUTTONUP:
-			input->setMouseXButton(wParam);
-			input->mouseIn(lParam);
-			return 0;
-		case WM_MOUSEWHEEL:
-			input->mouseWheelIn(wParam);
-			return 0;
-		case WM_DEVICECHANGE:
-			input->checkControllers();
-			return 0;
+		case SDL_QUIT:
+			isRunning = false;
+			break;
 		}
 	}
-	return DefWindowProc(hwnd, msg, wParam, lParam);
+
+	const Uint8* state = SDL_GetKeyboardState(NULL);
+	if (state[SDL_SCANCODE_ESCAPE])
+	{
+		isRunning = false;
+	}
+
+	paddleDir = 0;
+	if (state[SDL_SCANCODE_W])
+	{
+		paddleDir -= 1;
+	}
+	if (state[SDL_SCANCODE_S])
+	{
+		paddleDir += 1;
+	}
 }
 
-void Game::initialize(HWND hw)
+void Game::UpdateGame() noexcept
 {
-	hwnd = hw;
-
-	graphics = new Graphics();
-	graphics->initialize(hwnd, GAME_WIDTH, GAME_HEIGHT, FULLSCREEN);
-
-	input->initialize(hwnd, false);
+	while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksCount + 16));
 	
-	if(QueryPerformanceFrequency(&timeFreq) == false)
-		throw(GameError(gameErrorNS::FATAL_ERROR, "error initializeing"));
+	float deltaTime = (SDL_GetTicks() - ticksCount) / 1000.0f;
 
-	QueryPerformanceCounter(&timeStart);
-
-	initialized = true;
-}
-
-void Game::renderGame()
-{
-	if (SUCCEEDED(graphics->beginScene()))
+	if (deltaTime > 0.05f)
 	{
-		render();
-
-		graphics->endScene();
+		deltaTime = 0.05f;
 	}
 
-	handleLostGraphicsDevice();
+	ticksCount = SDL_GetTicks();
 
-	graphics->showBackBuffer();
-}
-
-void Game::handleLostGraphicsDevice()
-{
-	hr = graphics->getDeviceState();
-	if (FAILED(hr))
+	if (paddleDir != 0)
 	{
-		if (hr == D3DERR_DEVICELOST)
+		paddlePos.y += paddleDir * 300.0f * deltaTime;
+		if (paddlePos.y < (paddleH / 2.0f + thickness))
 		{
-			Sleep(100);
-			return;
+			paddlePos.y = paddleH / 2.0f + thickness;
 		}
-		else if (hr == D3DERR_DEVICENOTRESET)
+		else if (paddlePos.y > (768.0f - paddleH / 2.0f - thickness))
 		{
-			releaseAll();
-			hr = graphics->reset();
-			if (FAILED(hr))
-				return;
-			resetAll();
+			paddlePos.y = 768.0f - paddleH / 2.0f - thickness;
 		}
-		else
-			return; // 다른 애러
+	}
+
+	ballPos.x += ballVel.x * deltaTime;
+	ballPos.y += ballVel.y * deltaTime;
+
+	float diff = paddlePos.y - ballPos.y;
+
+	diff = (diff > 0.0f) ? diff : -diff;
+
+	if (diff <= paddleH / 2.0f &&
+		ballPos.x <= 25.0f && ballPos.x >= 20.0f &&
+		ballVel.x < 0.0f)
+	{
+		ballVel.x *= -1.0f;
+	}
+
+	if (ballPos.y <= thickness && ballVel.y < 0.0f)
+	{
+		ballVel.y *= -1;
+	}
+	else if (ballPos.y >= (768 - thickness) &&
+		ballVel.y > 0.0f)
+	{
+		ballVel.y *= -1;
 	}
 }
 
-void Game::run(HWND hwnd)
+void Game::GenerateOutput() noexcept
 {
-	if (graphics == NULL)
-		return;
 
-	QueryPerformanceCounter(&timeEnd);
-	frameTime = (float)(timeEnd.QuadPart - timeStart.QuadPart) /
-		(float)timeFreq.QuadPart;
+	SDL_SetRenderDrawColor(
+		renderer,
+		0,
+		0,
+		255,
+		255
+	);
 
-	if (frameTime < MIN_FRAME_TIME)
-	{
-		sleepTime = (DWORD)((MIN_FRAME_TIME - frameTime) * 1000);
-		timeBeginPeriod(1);
-		Sleep(sleepTime);
-		timeEndPeriod(1);
-		return;
-	}
+	SDL_RenderClear(renderer);
 
-	if (frameTime > 0.0)
-		fps = (fps * 0.99f) + (0.01f / frameTime);
-	if (frameTime > MAX_FRAME_TIME)
-		frameTime = MAX_FRAME_TIME;
-	timeStart = timeEnd;
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-	if (!paused)
-	{
-		update();
-		ai();
-		collisions();
-		input->vibrateControllers(frameTime);
-	}
-	renderGame();
-	input->readControllers();
+	SDL_Rect wall{
+		0,
+		0,
+		1024,
+		thickness
+	};
+	SDL_RenderFillRect(renderer, &wall);
+	wall.y = 768 - thickness;
+	SDL_RenderFillRect(renderer, &wall);
 
-	input->clear(inputNS::KEYS_PRESSED);
-}
+	wall.x = 1024 - thickness;
+	wall.y = 0;
+	wall.w = thickness;
+	wall.h = 1024;
+	SDL_RenderFillRect(renderer, &wall);
 
-void Game::releaseAll() {}
+	SDL_Rect paddle{
+		static_cast<int>(paddlePos.x),
+		static_cast<int>(paddlePos.y - paddleH / 2),
+		thickness,
+		static_cast<int>(paddleH)
+	};
+	SDL_RenderFillRect(renderer, &paddle);
 
-void Game::resetAll() {}
-
-void Game::deleteAll()
-{
-	releaseAll();
-	SAFE_DELETE(graphics);
-	SAFE_DELETE(input);
-	initialized = false;
+	SDL_Rect ball{
+		static_cast<int>(ballPos.x - thickness / 2),
+		static_cast<int>(ballPos.y - thickness / 2),
+		thickness,
+		thickness
+	};
+	SDL_RenderFillRect(renderer, &ball);
+	SDL_RenderPresent(renderer);
 }

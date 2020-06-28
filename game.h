@@ -1,68 +1,31 @@
-#ifndef _GAME_H
-#define _GAME_H
-#define WIN32_LEAN_AND_MEAN
+#pragma once
+#include "SDL.h"
 
-class Game;
-
-#include <Windows.h>
-#include <Mmsystem.h>
-#include "graphics.h"
-#include "input.h"
-#include "constants.h"
-#include "gameError.h"
+struct Vector2
+{
+	float x;
+	float y;
+};
 
 class Game
 {
-protected:
-	Graphics * graphics;
-	Input *input;
-	HWND hwnd;
-	HRESULT hr;
-	LARGE_INTEGER timeStart;
-	LARGE_INTEGER timeEnd;
-	LARGE_INTEGER timeFreq;
-	float frameTime;
-	float fps;
-	DWORD sleepTime;
-	bool paused;
-	bool initialized;
-
 public:
 	Game();
+	bool Initialize() noexcept;
+	void RunLoop() noexcept;
+	void Shutdown() noexcept;
+private:
+	void ProcessInput() noexcept;
+	void UpdateGame() noexcept;
+	void GenerateOutput() noexcept;
 
-	virtual ~Game();
+	SDL_Window* wnd;
+	SDL_Renderer* renderer;
+	Uint32 ticksCount;
+	bool isRunning;
 
-	// 메시지 핸들러
-	LRESULT messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-	virtual void initialize(HWND hwnd);
-
-	virtual void run(HWND);
-
-	virtual void releaseAll();
-
-	virtual void resetAll();
-
-	virtual void deleteAll();
-
-	virtual void renderGame();
-
-	virtual void handleLostGraphicsDevice();
-
-	Graphics * getGraphics() { return graphics; }
-
-	Input* getInput() { return input; }
-
-	void exitGame() { PostMessage(hwnd, WM_DESTROY, 0, 0); }
-
-	virtual void update() = 0;
-	
-	virtual void ai() = 0;
-
-	virtual void collisions() = 0;
-
-	virtual void render() = 0;
-
+	int paddleDir;
+	Vector2 paddlePos;
+	Vector2 ballPos;
+	Vector2 ballVel;
 };
-
-#endif
