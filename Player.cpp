@@ -9,7 +9,7 @@ Player::Player(Game* game) : Actor(game), rightSpeed(0.0f), downSpeed(0.0f)
 		game->GetTexture("Assets/player1.png"),
 		game->GetTexture("Assets/player2.png"),
 		game->GetTexture("Assets/player3.png"),
-		game->GetTexture("Assets/player4.png"),
+		game->GetTexture("Assets/player4.png")
 	};
 	asc->SetAnimTextures(anims);
 }

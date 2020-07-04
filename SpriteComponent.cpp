@@ -4,7 +4,7 @@
 
 SpriteComponent::SpriteComponent(Actor* owner, int drawOrder)
 	:Component(owner)
-	,texture(nullptr)
+	,pTexture(nullptr)
 	,drawOrder(drawOrder)
 	,texWidth(0)
 	,texHeight(0)
@@ -19,7 +19,7 @@ SpriteComponent::~SpriteComponent()
 
 void SpriteComponent::Draw(SDL_Renderer* renderer)
 {
-	if (texture)
+	if (pTexture)
 	{
 		SDL_Rect r;
 		r.w = static_cast<int>(texWidth * pOwner->GetScale());
@@ -27,12 +27,12 @@ void SpriteComponent::Draw(SDL_Renderer* renderer)
 		r.x = static_cast<int>(pOwner->GetPosition().x - r.w / 2);
 		r.y = static_cast<int>(pOwner->GetPosition().y - r.h / 2);
 
-		SDL_RenderCopyEx(renderer, texture, nullptr, &r, -Math::ToDegrees(pOwner->GetRotation()), nullptr, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer, pTexture, nullptr, &r, -Math::ToDegrees(pOwner->GetRotation()), nullptr, SDL_FLIP_NONE);
 	}
 }
 
 void SpriteComponent::SetTexture(SDL_Texture* texture)
 {
-	texture = texture;
+	pTexture = texture;
 	SDL_QueryTexture(texture, nullptr, nullptr, &texWidth, &texHeight);
 }

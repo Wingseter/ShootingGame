@@ -212,7 +212,7 @@ void Game::UpdateGame() noexcept
 
 void Game::GenerateOutput() noexcept
 {
-	SDL_SetRenderDrawColor(renderer,0,0,255,255);
+	SDL_SetRenderDrawColor(renderer,0,0,0,255);
 	SDL_RenderClear(renderer);
 
 	for (auto sprite : sprites)

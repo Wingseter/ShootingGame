@@ -3,7 +3,7 @@
 #include "Component.h"
 #include <algorithm>
 
-Actor::Actor(Game* game):state(EActive), position(Vector2::Zero), scale(1.0f), rotation(1.0f), game(game)
+Actor::Actor(Game* game):state(EActive), position(Vector2::Zero), scale(1.0f), rotation(0.0f), game(game)
 {
 	game->AddActor(this);
 }
