@@ -1,56 +1,50 @@
 #include "Game.h"
-
-constexpr int thickness = 15;
-constexpr float paddleH = 100.0f;
+#include <algorithm>
+#include "Actor.h"
+#include "SpriteComponent.h"
+#include "Player.h"
+#include "BGSpriteComponent.h"
+#include "SDL_image.h"
 
 Game::Game()
-	:wnd(nullptr)
+	:pWindow(nullptr)
 	,renderer(nullptr)
-	,ticksCount(0)
+	,updatingActors(false)
 	,isRunning(true)
-	,paddleDir(0)
 {}
 
 bool Game::Initialize() noexcept
 {
-	int sdlResult = SDL_Init(SDL_INIT_VIDEO);
-	if (sdlResult != 0)
+	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0)
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return false;
 	}
 
-	wnd = SDL_CreateWindow(
-		"Shooting Game",
-		100,
-		100,
-		1024,
-		768,
-		0
-	);
-	if (!wnd)
+	pWindow = SDL_CreateWindow("Shooting Game", 100, 100, 1024, 768, 0);
+	if (!pWindow)
 	{
 		SDL_Log("Failed to create window %s", SDL_GetError());
 		return false;
 	}
 
-	renderer = SDL_CreateRenderer(
-		wnd,
-		-1,
-		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-	);
-
+	renderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer)
 	{
 		SDL_Log("Failed to create renderer : %s", SDL_GetError());
 		return false;
 	}
-	paddlePos.x = 10.0f;
-	paddlePos.y = 768.0f / 2.0f;
-	ballPos.x = 1024.0f / 2.0f;
-	ballPos.y = 768.0f / 2.0f;
-	ballVel.x = -200.0f;
-	ballVel.y = 235.0f;
+	
+	if (IMG_Init(IMG_INIT_PNG) == 0)
+	{
+		SDL_Log("Unable to initialize SDl_Image: %s", SDL_GetError());
+		return false;
+	}
+
+	LoadData();
+
+	ticksCount = SDL_GetTicks();
+
 	return true;
 }
 
@@ -66,9 +60,91 @@ void Game::RunLoop() noexcept
 
 void Game::Shutdown() noexcept
 {
+	UnloadData();
+	IMG_Quit();
 	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(wnd);
+	SDL_DestroyWindow(pWindow);
 	SDL_Quit();
+}
+
+void Game::AddActor(Actor* actor)
+{
+	if (updatingActors)
+	{
+		pendingActors.emplace_back(actor);
+	}
+	else
+	{
+		actors.emplace_back(actor);
+	}
+}
+
+void Game::RemoveActor(Actor* actor)
+{
+	auto iter = std::find(pendingActors.begin(), pendingActors.end(), actor);
+	if (iter != pendingActors.end())
+	{
+		std::iter_swap(iter, pendingActors.end() - 1);
+		pendingActors.pop_back();
+	}
+
+	iter = std::find(actors.begin(), actors.end(), actor);
+	if (iter != actors.end())
+	{
+		std::iter_swap(iter, actors.end() - 1);
+		actors.pop_back();
+	}
+}
+
+void Game::AddSprite(SpriteComponent* sprite)
+{
+	int myDrawOrder = sprite->GetDrawOrder();
+	auto iter = sprites.begin();
+	for (; iter != sprites.end(); ++iter)
+	{
+		if (myDrawOrder < (*iter)->GetDrawOrder())
+		{
+			break;
+		}
+	}
+
+	sprites.insert(iter, sprite);
+}
+
+void Game::RemoveSprite(SpriteComponent* sprite)
+{
+	auto iter = std::find(sprites.begin(), sprites.end(), sprite);
+	sprites.erase(iter);
+}
+
+SDL_Texture* Game::GetTexture(const std::string& fileName)
+{
+	SDL_Texture* tex = nullptr;
+
+	auto iter = textures.find(fileName);
+	if (iter != textures.end())
+	{
+		tex = iter->second;
+	}
+	else 
+	{
+		SDL_Surface* surf = IMG_Load(fileName.c_str());
+		if (!surf)
+		{
+			SDL_Log("Failed to load texture file %s", fileName.c_str());
+			return nullptr;
+		}
+
+		tex = SDL_CreateTextureFromSurface(renderer, surf);
+		SDL_FreeSurface(surf);
+		if (!tex)
+		{
+			SDL_Log("Failed to convert curface to texture for %s", fileName.c_str());
+			return nullptr;
+		}
+		textures.emplace(fileName.c_str(), tex);
+	}
+	return tex;
 }
 
 void Game::ProcessInput() noexcept
@@ -90,15 +166,7 @@ void Game::ProcessInput() noexcept
 		isRunning = false;
 	}
 
-	paddleDir = 0;
-	if (state[SDL_SCANCODE_W])
-	{
-		paddleDir -= 1;
-	}
-	if (state[SDL_SCANCODE_S])
-	{
-		paddleDir += 1;
-	}
+	pPlayer->ProcessKeyboard(state);
 }
 
 void Game::UpdateGame() noexcept
@@ -113,90 +181,85 @@ void Game::UpdateGame() noexcept
 	}
 
 	ticksCount = SDL_GetTicks();
-
-	if (paddleDir != 0)
+	
+	updatingActors = true;
+	for (auto actor : actors)
 	{
-		paddlePos.y += paddleDir * 300.0f * deltaTime;
-		if (paddlePos.y < (paddleH / 2.0f + thickness))
+		actor->Update(deltaTime);
+	}
+	updatingActors = false;
+
+	for (auto pending: pendingActors)
+	{
+		actors.emplace_back(pending);
+	}
+	pendingActors.clear();
+
+	std::vector<Actor*> deadActors;
+	for (auto actor : actors)
+	{
+		if (actor->GetState() == Actor::EDead)
 		{
-			paddlePos.y = paddleH / 2.0f + thickness;
-		}
-		else if (paddlePos.y > (768.0f - paddleH / 2.0f - thickness))
-		{
-			paddlePos.y = 768.0f - paddleH / 2.0f - thickness;
+			deadActors.emplace_back(actor);
 		}
 	}
 
-	ballPos.x += ballVel.x * deltaTime;
-	ballPos.y += ballVel.y * deltaTime;
-
-	float diff = paddlePos.y - ballPos.y;
-
-	diff = (diff > 0.0f) ? diff : -diff;
-
-	if (diff <= paddleH / 2.0f &&
-		ballPos.x <= 25.0f && ballPos.x >= 20.0f &&
-		ballVel.x < 0.0f)
+	for (auto actor : deadActors)
 	{
-		ballVel.x *= -1.0f;
-	}
-
-	if (ballPos.y <= thickness && ballVel.y < 0.0f)
-	{
-		ballVel.y *= -1;
-	}
-	else if (ballPos.y >= (768 - thickness) &&
-		ballVel.y > 0.0f)
-	{
-		ballVel.y *= -1;
+		delete actor;
 	}
 }
 
 void Game::GenerateOutput() noexcept
 {
-
-	SDL_SetRenderDrawColor(
-		renderer,
-		0,
-		0,
-		255,
-		255
-	);
-
+	SDL_SetRenderDrawColor(renderer,0,0,255,255);
 	SDL_RenderClear(renderer);
 
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-	SDL_Rect wall{
-		0,
-		0,
-		1024,
-		thickness
-	};
-	SDL_RenderFillRect(renderer, &wall);
-	wall.y = 768 - thickness;
-	SDL_RenderFillRect(renderer, &wall);
-
-	wall.x = 1024 - thickness;
-	wall.y = 0;
-	wall.w = thickness;
-	wall.h = 1024;
-	SDL_RenderFillRect(renderer, &wall);
-
-	SDL_Rect paddle{
-		static_cast<int>(paddlePos.x),
-		static_cast<int>(paddlePos.y - paddleH / 2),
-		thickness,
-		static_cast<int>(paddleH)
-	};
-	SDL_RenderFillRect(renderer, &paddle);
-
-	SDL_Rect ball{
-		static_cast<int>(ballPos.x - thickness / 2),
-		static_cast<int>(ballPos.y - thickness / 2),
-		thickness,
-		thickness
-	};
-	SDL_RenderFillRect(renderer, &ball);
+	for (auto sprite : sprites)
+	{
+		sprite->Draw(renderer);
+	}
 	SDL_RenderPresent(renderer);
+}
+
+void Game::LoadData()
+{
+	pPlayer = new Player(this);
+	pPlayer->SetPosition(Vector2(100.0f, 384.0f));
+	pPlayer->SetScale(1.5f);
+
+	Actor* temp = new Actor(this);
+	temp->SetPosition(Vector2(512.0f, 384.0f));
+
+	BGSpriteComponent* bg = new BGSpriteComponent(temp);
+	bg->SetScreenSize(Vector2(1024.0f, 768.0f));
+	std::vector<SDL_Texture*> bgtexs = {
+		GetTexture("Assets/background1.png"),
+		GetTexture("Assets/background2.png")
+	};
+	bg->SetBGTextures(bgtexs);
+	bg->SetScrollSpeed(-100.0f);
+
+	bg = new BGSpriteComponent(temp, 50);
+	bg->SetScreenSize(Vector2(1024.0f, 768.0f));
+
+	bgtexs = {
+		GetTexture("Assets/Stars.png"),
+		GetTexture("Assets/Stars.png")
+	};
+	bg->SetBGTextures(bgtexs);
+	bg->SetScrollSpeed(-200.0f);
+}
+
+void Game::UnloadData()
+{
+	while (!actors.empty())
+	{
+		delete actors.back();
+	}
+	for (auto i : textures)
+	{
+		SDL_DestroyTexture(i.second);
+	}
+	textures.clear();
 }
