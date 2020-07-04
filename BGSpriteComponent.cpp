@@ -28,7 +28,7 @@ void BGSpriteComponent::Draw(SDL_Renderer* renderer)
 		r.h = static_cast<int>(screenSize.y);
 
 		r.x = static_cast<int>(pOwner->GetPosition().x - r.w / 2 + bg.offset.x);
-		r.y = static_cast<int>(pOwner->GetPosition().y - r.w / 2 + bg.offset.y);
+		r.y = static_cast<int>(pOwner->GetPosition().y - r.h / 2 + bg.offset.y);
 
 		SDL_RenderCopy(renderer,
 			bg.texture,
