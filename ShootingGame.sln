@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShootingGame", "ShootingGame\ShootingGame.vcxproj", "{08C7191D-4DA3-48A1-AE1B-21C1F0E059C6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{08C7191D-4DA3-48A1-AE1B-21C1F0E059C6}.Release|x64.Build.0 = Release|x64
 		{08C7191D-4DA3-48A1-AE1B-21C1F0E059C6}.Release|x86.ActiveCfg = Release|Win32
 		{08C7191D-4DA3-48A1-AE1B-21C1F0E059C6}.Release|x86.Build.0 = Release|Win32
+		{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}.Debug|x64.ActiveCfg = Debug|x64
+		{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}.Debug|x64.Build.0 = Debug|x64
+		{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}.Debug|x86.ActiveCfg = Debug|Win32
+		{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}.Debug|x86.Build.0 = Debug|Win32
+		{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}.Release|x64.ActiveCfg = Release|x64
+		{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}.Release|x64.Build.0 = Release|x64
+		{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}.Release|x86.ActiveCfg = Release|Win32
+		{AEE4D52E-1B8E-4ECE-B8A1-57288C0C7420}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
