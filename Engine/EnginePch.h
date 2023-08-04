@@ -39,4 +39,13 @@ using Vec3		= XMFLOAT3;
 using Vec4		= XMFLOAT4;
 using Matrix	= XMMATRIX;
 
-void HelloEngine();
+struct WindowInfo
+{
+	HWND hwnd;
+	int32 width;
+	int32 height;
+	bool windowed;
+};
+
+extern unique_ptr<class Engine> GEngine;
+
