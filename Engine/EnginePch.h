@@ -27,6 +27,11 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
 
+enum
+{
+	SWAP_CHAIN_BUFFER_COUNT = 2
+};
+
 using int8		= __int8;
 using int16		= __int16;
 using int32		= __int32;
