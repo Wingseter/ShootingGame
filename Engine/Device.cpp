@@ -4,6 +4,8 @@
 void Device::Init()
 {
 #ifdef _DEBUG
+	::D3D12GetDebugInterface(IID_PPV_ARGS(&_debugController));
+	_debugController->EnableDebugLayer();
 #endif
 
 	::CreateDXGIFactory(IID_PPV_ARGS(&_dxgi));
