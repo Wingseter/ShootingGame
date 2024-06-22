@@ -93,7 +93,7 @@ void ConstantBuffer::Clear()
 	_currentIndex = 0;
 }
 
-void ConstantBuffer::PushData(int32 rootParamIndex, void* buffer, uint32 size)
+D3D12_CPU_DESCRIPTOR_HANDLE ConstantBuffer::PushData(int32 rootParamIndex, void* buffer, uint32 size)
 {
 	// Ensure the current index is within the valid range (bounds check)
 	assert(_currentIndex < _elementSize);
