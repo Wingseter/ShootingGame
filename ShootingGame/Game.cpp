@@ -46,19 +46,12 @@ void Game::Update()
 
 	{
 		Transform t;
-		t.offset = Vec4(0.75f, 0.f, 0.f, 0.f);
+		t.offset = Vec4(0.f, 0.f, 0.f, 0.f);
 		mesh->SetTransform(t);
 
 		mesh->Render();
 	}
 
-	{
-		Transform t;
-		t.offset = Vec4(0.f, 0.75f, 0.f, 0.f);
-		mesh->SetTransform(t);
-
-		mesh->Render();
-	}
 
 	GEngine->RenderEnd();
 }
