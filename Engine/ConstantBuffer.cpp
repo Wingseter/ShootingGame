@@ -102,13 +102,12 @@ D3D12_CPU_DESCRIPTOR_HANDLE ConstantBuffer::PushData(int32 rootParamIndex, void*
 	::memcpy(&_mappedBuffer[_currentIndex * _elementSize], buffer, size);
 
 	// Get the GPU virtual address for the current index position
-	D3D12_GPU_VIRTUAL_ADDRESS address = GetGpuVirtualAddress(_currentIndex);
-
-	// Set the graphics root constant buffer view (root parameter index and address)
-	CMD_LIST->SetGraphicsRootConstantBufferView(rootParamIndex, address);
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuHandle(_currentIndex);
 
 	// Increment the current index (move to the next position)
 	_currentIndex++;
+
+	return cpuHandle;
 }
 
 
@@ -122,5 +121,5 @@ D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGpuVirtualAddress(uint32 index)
 
 D3D12_CPU_DESCRIPTOR_HANDLE ConstantBuffer::GetCpuHandle(uint32 index)
 {
-	return CD3DX12_CPU_DESCRIPTOR_HANDLE(_cpuHandleBegin, index * _handleIncrementSize)
+	return CD3DX12_CPU_DESCRIPTOR_HANDLE(_cpuHandleBegin, index * _handleIncrementSize);
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-// GPU가 뭘 해야할지 기술
 class Shader
 {
 public:
