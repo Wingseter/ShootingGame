@@ -11,12 +11,18 @@
 #include "Texture.h"
 #include "DepthStencilBuffer.h"
 
+#include "Input.h"
+#include "Timer.h"
+
 class Engine
 {
 public:
 
 	void Init(const WindowInfo& info);
 	void Render();
+
+public:
+	void Update();
 
 public:
 	shared_ptr<Device> GetDevice() { return _device; }
@@ -27,11 +33,17 @@ public:
 	shared_ptr<TableDescriptorHeap> GetTableDescHeap() { return _tableDescHeap; }
 	shared_ptr<DepthStencilBuffer> GetDepthStencilBuffer() { return _depthStencilBuffer; }
 
+
+	shared_ptr<Input> GetInput() { return _input; }
+	shared_ptr<Timer> GetTimer() { return _timer; }
 public:
 	void RenderBegin();
 	void RenderEnd();
 
 	void ResizeWindow(int32 width, int32 height);
+
+private:
+	void ShowFps();
 
 private:
 	// 그려질 화면 크기 관련
@@ -46,5 +58,8 @@ private:
 	shared_ptr<ConstantBuffer> _cb;
 	shared_ptr<TableDescriptorHeap> _tableDescHeap;
 	shared_ptr<DepthStencilBuffer> _depthStencilBuffer;
+
+	shared_ptr<Input> _input = make_shared<Input>();
+	shared_ptr<Timer> _timer = make_shared<Timer>();
 };
 

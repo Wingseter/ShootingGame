@@ -20,7 +20,7 @@ void Input::Update()
 	
 	for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
 	{
-		if (::GetAsyncKeyState(key) & 0x0000)
+		if (::GetAsyncKeyState(key) & 0x8000)
 		{
 			KEY_STATE& state = _states[key];
 
@@ -34,9 +34,9 @@ void Input::Update()
 			KEY_STATE& state = _states[key];
 
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
-				state == KEY_STATE::UP
+				state = KEY_STATE::UP;
 			else
-				state == KEY_STATE::NONE;
+				state = KEY_STATE::NONE;
 		}
 	}
 }
