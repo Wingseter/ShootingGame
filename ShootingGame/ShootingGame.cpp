@@ -49,7 +49,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     GWindowInfo.height = 600;
     GWindowInfo.windowed = true;
 
-
     unique_ptr<Game> game = make_unique<Game>();
     game->Init(GWindowInfo);
 
