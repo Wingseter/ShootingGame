@@ -1,5 +1,19 @@
 #pragma once
-class Transform
+#include "Component.h"
+
+struct TransformMatrix
 {
+	Vec4 offset;
+};
+
+
+class Transform : public Component
+{
+public:
+	Transform();
+	virtual ~Transform();
+
+private:
+
 };
 

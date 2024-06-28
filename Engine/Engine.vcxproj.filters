@@ -81,7 +81,9 @@
     <ClInclude Include="Monobehaviour.h">
       <Filter>GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h" />
+    <ClInclude Include="Transform.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePch.cpp">
@@ -144,7 +146,9 @@
     <ClCompile Include="Monobehaviour.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Transform.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resources\Shader\default.hlsli">
