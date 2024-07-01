@@ -100,6 +100,19 @@ struct Vertex
 	Vec2 uv;
 };
 
+#define DECLARE_SINGLE(type)		\
+private:							\
+	type() {}						\
+	~type() {}						\
+public:								\
+	static type* GetInstance()		\
+	{								\
+		static type instance;		\
+		return &instance;			\
+	}								\
+
+#define GET_SINGLE(type)	type::GetInstance()
+
 #define DEVICE GEngine->GetDevice()->GetDevice()
 #define CMD_LIST GEngine->GetCmdQueue()->GetCmdList()
 #define RESOURCE_CMD_LIST GEngine->GetCmdQueue()->GetResourceCmdList()

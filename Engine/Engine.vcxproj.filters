@@ -84,6 +84,12 @@
     <ClInclude Include="Transform.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnginePch.cpp">
@@ -148,6 +154,12 @@
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
