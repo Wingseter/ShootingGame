@@ -32,9 +32,6 @@ public:
 	shared_ptr<TableDescriptorHeap> GetTableDescHeap() { return _tableDescHeap; }
 	shared_ptr<DepthStencilBuffer> GetDepthStencilBuffer() { return _depthStencilBuffer; }
 
-	shared_ptr<Input> GetInput() { return _input; }
-	shared_ptr<Timer> GetTimer() { return _timer; }
-
 	shared_ptr<ConstantBuffer> GetConstantBuffer(CONSTANT_BUFFER_TYPE type) { return _constantBuffers[static_cast<uint8>(type)]; }
 public:
 	void RenderBegin();
@@ -57,9 +54,6 @@ private:
 	shared_ptr<RootSignature> _rootSignature = make_shared<RootSignature>();
 	shared_ptr<TableDescriptorHeap> _tableDescHeap = make_shared<TableDescriptorHeap>();
 	shared_ptr<DepthStencilBuffer> _depthStencilBuffer = make_shared<DepthStencilBuffer>();
-
-	shared_ptr<Input> _input = make_shared<Input>();
-	shared_ptr<Timer> _timer = make_shared<Timer>();
 
 	vector<shared_ptr<ConstantBuffer>> _constantBuffers;
 };
