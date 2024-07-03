@@ -91,19 +91,26 @@ enum
 
 struct WindowInfo
 {
-	HWND	hwnd; // 출력 윈도우
-	int32	width; // 너비
-	int32	height; // 높이
-	bool	windowed; // 창모드 or 전체화면
+	HWND	hwnd; // output window
+	int32	width; // window horizon
+	int32	height; // window vertical 
+	bool	windowed; // full screen 
 };
 
 struct Vertex
 {
-	Vec3 pos;
-	Vec4 color;
-	Vec2 uv;
-};
+	Vertex() {}
 
+	Vertex(Vec3 p, Vec2 u, Vec3 n, Vec3 t)
+		: pos(p), uv(u), normal(n), tangent(t)
+	{
+	}
+
+	Vec3 pos;
+	Vec2 uv;
+	Vec3 normal;
+	Vec3 tangent;
+};
 #define DECLARE_SINGLE(type)		\
 private:							\
 	type() {}						\

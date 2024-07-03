@@ -1,11 +1,15 @@
 #pragma once
+#include "Object.h"
 
 class Material;
 
-class Mesh
+class Mesh : public Object
 {
 public:
-	void Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexBuffer);
+	Mesh();
+	virtual ~Mesh();
+
+	void Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexbuffer);
 	void Render();
 
 private:
@@ -17,9 +21,8 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW	_vertexBufferView = {};
 	uint32 _vertexCount = 0;
 
-	ComPtr<ID3D12Resource> _indexBuffer;
-	D3D12_INDEX_BUFFER_VIEW _indexBufferView;
+	ComPtr<ID3D12Resource>		_indexBuffer;
+	D3D12_INDEX_BUFFER_VIEW		_indexBufferView;
 	uint32 _indexCount = 0;
-
 };
 
