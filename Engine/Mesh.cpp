@@ -3,6 +3,16 @@
 #include "Engine.h"
 #include "Material.h"
 
+Mesh::Mesh() : Object(OBJECT_TYPE::MESH)
+{
+
+}
+
+Mesh::~Mesh()
+{
+
+}
+
 void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexBuffer)
 {
 	CreateVertexBuffer(vertexBuffer);
@@ -12,14 +22,13 @@ void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexB
 void Mesh::Render()
 {
 	CMD_LIST->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	CMD_LIST->IASetVertexBuffers(0, 1, &_vertexBufferView);
+	CMD_LIST->IASetVertexBuffers(0, 1, &_vertexBufferView); // Slot: (0~15)
 	CMD_LIST->IASetIndexBuffer(&_indexBufferView);
 
 	GEngine->GetTableDescHeap()->CommitTable();
 
 	CMD_LIST->DrawIndexedInstanced(_indexCount, 1, 0, 0, 0);
 }
-
 
 void Mesh::CreateVertexBuffer(const vector<Vertex>& buffer)
 {
@@ -46,8 +55,8 @@ void Mesh::CreateVertexBuffer(const vector<Vertex>& buffer)
 
 	// Initialize the vertex buffer view.
 	_vertexBufferView.BufferLocation = _vertexBuffer->GetGPUVirtualAddress();
-	_vertexBufferView.StrideInBytes = sizeof(Vertex); // 정점 1개 크기
-	_vertexBufferView.SizeInBytes = bufferSize; // 버퍼의 크기	
+	_vertexBufferView.StrideInBytes = sizeof(Vertex); 
+	_vertexBufferView.SizeInBytes = bufferSize; 	
 }
 
 void Mesh::CreateIndexBuffer(const vector<uint32>& buffer)
@@ -67,7 +76,7 @@ void Mesh::CreateIndexBuffer(const vector<uint32>& buffer)
 		IID_PPV_ARGS(&_indexBuffer));
 
 	void* indexDataBuffer = nullptr;
-	CD3DX12_RANGE readRange(0, 0); // We do not intend to read from this resource on the CPU.
+	CD3DX12_RANGE readRange(0, 0); 
 	_indexBuffer->Map(0, &readRange, &indexDataBuffer);
 	::memcpy(indexDataBuffer, &buffer[0], bufferSize);
 	_indexBuffer->Unmap(0, nullptr);

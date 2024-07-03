@@ -11,17 +11,11 @@
 #include "Texture.h"
 #include "DepthStencilBuffer.h"
 
-#include "Input.h"
-#include "Timer.h"
-
 class Engine
 {
 public:
 
 	void Init(const WindowInfo& info);
-	void Render();
-
-public:
 	void Update();
 
 public:
@@ -34,7 +28,9 @@ public:
 	shared_ptr<DepthStencilBuffer> GetDepthStencilBuffer() { return _depthStencilBuffer; }
 
 	shared_ptr<ConstantBuffer> GetConstantBuffer(CONSTANT_BUFFER_TYPE type) { return _constantBuffers[static_cast<uint8>(type)]; }
+
 public:
+	void Render();
 	void RenderBegin();
 	void RenderEnd();
 

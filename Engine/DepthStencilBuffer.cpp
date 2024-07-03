@@ -19,8 +19,7 @@ void DepthStencilBuffer::Init(const WindowInfo& window, DXGI_FORMAT dsvFormat)
 		&desc,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
 		&optimizedClearValue,
-		IID_PPV_ARGS(&_dsvBuffer)
-	);
+		IID_PPV_ARGS(&_dsvBuffer));
 
 	D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 	heapDesc.NumDescriptors = 1;

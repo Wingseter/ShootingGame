@@ -36,7 +36,7 @@ class Input
 	DECLARE_SINGLE(Input);
 
 public:
-	void Init(HWND);
+	void Init(HWND hwnd);
 	void Update();
 
 	bool GetButton(KEY_TYPE key) { return GetState(key) == KEY_STATE::PRESS; }
