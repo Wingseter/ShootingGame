@@ -91,10 +91,10 @@ enum
 
 struct WindowInfo
 {
-	HWND	hwnd; // output window
-	int32	width; // window horizon
-	int32	height; // window vertical 
-	bool	windowed; // full screen 
+	HWND	hwnd; // 출력 윈도우
+	int32	width; // 너비
+	int32	height; // 높이
+	bool	windowed; // 창모드 or 전체화면
 };
 
 struct Vertex
@@ -111,6 +111,7 @@ struct Vertex
 	Vec3 normal;
 	Vec3 tangent;
 };
+
 #define DECLARE_SINGLE(type)		\
 private:							\
 	type() {}						\
@@ -136,6 +137,10 @@ public:								\
 
 struct TransformParams
 {
+	Matrix matWorld;
+	Matrix matView;
+	Matrix matProjection;
+	Matrix matWV;
 	Matrix matWVP;
 };
 

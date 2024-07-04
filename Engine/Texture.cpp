@@ -20,7 +20,6 @@ void Texture::Init(const wstring& path)
 
 void Texture::CreateTexture(const wstring& path)
 {
-	// 파일 확장자 얻기
 	wstring ext = fs::path(path).extension();
 
 	if (ext == L".dds" || ext == L".DDS")
