@@ -2,6 +2,7 @@
 
 enum class CONSTANT_BUFFER_TYPE : uint8
 {
+	GLOBAL,
 	TRANSFORM,
 	MATERIAL,
 	END
