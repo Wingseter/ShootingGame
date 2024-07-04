@@ -11,12 +11,13 @@ public:
 	void PushData();
 
 public:
+	// Parent 기준
 	const Vec3& GetLocalPosition() { return _localPosition; }
-	const Vec3& GetLocalReotation() { return _localRotation; }
+	const Vec3& GetLocalRotation() { return _localRotation; }
 	const Vec3& GetLocalScale() { return _localScale; }
 
 	const Matrix& GetLocalToWorldMatrix() { return _matWorld; }
-	const Vec3& GetWorldPosition() { return _matWorld.Translation(); }
+	Vec3 GetWorldPosition() { return _matWorld.Translation(); }
 
 	Vec3 GetRight() { return _matWorld.Right(); }
 	Vec3 GetUp() { return _matWorld.Up(); }
@@ -31,6 +32,7 @@ public:
 	weak_ptr<Transform> GetParent() { return _parent; }
 
 private:
+	// Parent 기준
 	Vec3 _localPosition = {};
 	Vec3 _localRotation = {};
 	Vec3 _localScale = { 1.f, 1.f, 1.f };
