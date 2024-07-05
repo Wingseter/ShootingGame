@@ -6,7 +6,6 @@
 #include "ConstantBuffer.h"
 #include "Light.h"
 
-
 void Scene::Awake()
 {
 	for (const shared_ptr<GameObject>& gameObject : _gameObjects)

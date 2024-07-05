@@ -2,6 +2,7 @@
 
 class GameObject;
 
+
 class Scene
 {
 public:
@@ -23,4 +24,5 @@ public:
 
 private:
 	vector<shared_ptr<GameObject>> _gameObjects;
-}; 
+};
+

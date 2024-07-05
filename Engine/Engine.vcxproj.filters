@@ -105,9 +105,6 @@
     <ClInclude Include="MeshRenderer.h">
       <Filter>Object\Component</Filter>
     </ClInclude>
-    <ClInclude Include="MonoBehaviour.h">
-      <Filter>Object\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Object\Component</Filter>
     </ClInclude>
@@ -115,6 +112,9 @@
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
+      <Filter>Object\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="MonoBehaviour.h">
       <Filter>Object\Component</Filter>
     </ClInclude>
   </ItemGroup>
