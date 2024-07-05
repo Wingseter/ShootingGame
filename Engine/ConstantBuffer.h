@@ -28,6 +28,7 @@ public:
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(uint32 index);
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle(uint32 index);
+
 private:
 	void CreateBuffer();
 	void CreateView();
@@ -38,9 +39,9 @@ private:
 	uint32					_elementSize = 0;
 	uint32					_elementCount = 0;
 
-	ComPtr<ID3D12DescriptorHeap> _cbvHeap;
-	D3D12_CPU_DESCRIPTOR_HANDLE _cpuHandleBegin = {};
-	uint32 _handleIncrementSize = 0;
+	ComPtr<ID3D12DescriptorHeap>		_cbvHeap;
+	D3D12_CPU_DESCRIPTOR_HANDLE			_cpuHandleBegin = {};
+	uint32								_handleIncrementSize = 0;
 
 	uint32					_currentIndex = 0;
 

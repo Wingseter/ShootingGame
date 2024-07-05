@@ -3,8 +3,8 @@
 
 enum class PROJECTION_TYPE
 {
-	PERSPECTIVE, 
-	ORTHOGRAPHIC,
+	PERSPECTIVE, // 원근 투영
+	ORTHOGRAPHIC, // 직교 투영
 };
 
 class Camera : public Component
@@ -28,6 +28,7 @@ private:
 	Matrix _matProjection = {};
 
 public:
+	// TEMP
 	static Matrix S_MatView;
 	static Matrix S_MatProjection;
 };

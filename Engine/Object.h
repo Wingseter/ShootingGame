@@ -29,6 +29,7 @@ public:
 	void SetName(const wstring& name) { _name = name; }
 	const wstring& GetName() { return _name; }
 
+	// TODO : Instantiate
 
 protected:
 	friend class Resources;
