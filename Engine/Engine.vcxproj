@@ -224,10 +224,10 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Resources\Shader\default.hlsli" />
-    <None Include="..\Resources\Shader\params.hlsli" />
-    <None Include="..\Resources\Shader\skybox.hlsli" />
-    <None Include="..\Resources\Shader\utils.hlsli" />
+    <None Include="..\Resources\Shader\forward.fx" />
+    <None Include="..\Resources\Shader\params.fx" />
+    <None Include="..\Resources\Shader\skybox.fx" />
+    <None Include="..\Resources\Shader\utils.fx" />
     <None Include="SimpleMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
