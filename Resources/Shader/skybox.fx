@@ -17,7 +17,7 @@ struct VS_OUT
 
 VS_OUT VS_Main(VS_IN input)
 {
-    VS_OUT output = (VS_OUT) 0;
+    VS_OUT output = (VS_OUT)0;
 
     // Translation은 하지 않고 Rotation만 적용한다
     float4 viewPos = mul(float4(input.localPos, 0), g_matView);
@@ -32,8 +32,8 @@ VS_OUT VS_Main(VS_IN input)
 
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float4 color = g_tex_0.Sample(g_sam_0, input.uv);
-    return color;
+     float4 color = g_tex_0.Sample(g_sam_0, input.uv);
+     return color;
 }
 
 #endif
